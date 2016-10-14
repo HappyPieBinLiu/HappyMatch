@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">HappyMatch</string>
+    <string name="signin_text">欢迎登录开心搭配！</string>
+    <string name="login">登  录</string>
+    <string name="rememberpwd">记住密码</string>
+    <string name="frogetpwd">忘记密码？</string>
+    <string name="registerwords">哎呀妈呀，还没有账户？俺要 </string>
+    <string name="register"> 注册</string>
+    <string name="passwordhint">Please input your password</string>
+    <string name="usernamehint">Please input your username</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+</resources>
