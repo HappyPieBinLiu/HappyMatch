@@ -123,7 +123,7 @@
             android:id="@+id/password"/>
     </LinearLayout>
     <Button
-        android:id="@+id/btnlogin"
+        android:id="@+id/btnLogin"
         android:layout_width="260dp"
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
@@ -169,7 +169,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="vertical">
         <TextView
@@ -183,17 +183,18 @@
             android:textColor="#5E6A81"
             android:textSize="14sp" >
         </TextView>
-        <Spinner
+        <TextView
             android:id="@+id/txtRegisterLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="@string/register"
             android:layout_marginBottom="5dp"
             android:layout_toRightOf="@+id/register"
             android:textSize="15sp"
+            android:textColor="#6A5ACD"
+            android:linksClickable="true"
             android:textStyle="bold" >
-        </Spinner>
+        </TextView>
 
     </RelativeLayout>
 </LinearLayout>

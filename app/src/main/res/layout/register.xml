@@ -5,28 +5,201 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-        <ImageView
-            android:layout_width="match_parent"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="#f7c1f7"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/infoword"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
-    </LinearLayout>
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffff"
+            android:textSize="48sp"
+            android:text="@string/personalInfo"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_toLeftOf="@id/infoword"
+            android:layout_centerVertical="true"
+            android:background="@drawable/arrowleft"
+           />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/infoword"
+            android:background="@drawable/arrowright"
+            />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
 
         <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="68dp"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:id="@+id/editText"
-            android:layout_weight="1"/>
+            android:id="@+id/username"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="1dp"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/user"
+            android:drawablePadding="6sp"
+            android:hint="@string/usernamehint"
+            android:textColor="#3D3D3D"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="4dp"
+            android:background="#F2F2F2" >
+        </View>
+        <EditText
+            android:id="@+id/RegPwd"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/password"
+            android:drawablePadding="6sp"
+            android:hint="@string/passwordhint"
+            android:inputType="textPassword"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="4dp"
+            android:background="#F2F2F2" >
+        </View>
+        <EditText
+            android:id="@+id/RegPwdAgain"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/password"
+            android:drawablePadding="6sp"
+            android:hint="@string/passwordhinttwo"
+            android:inputType="textPassword"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="2dp"
+            android:background="#F2F2F2" >
+        </View>
+        <EditText
+            android:id="@+id/RegMail"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/mail"
+            android:drawablePadding="6sp"
+            android:hint="@string/mailhint"
+            android:inputType="textWebEmailAddress"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="2dp"
+            android:background="#F2F2F2" >
+        </View>
+        <EditText
+            android:id="@+id/RegSex"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/sex"
+            android:drawablePadding="6sp"
+            android:hint="@string/sexhint"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="2dp"
+            android:background="#F2F2F2" >
+        </View>
+        <EditText
+            android:id="@+id/RegInfoheight"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/height"
+            android:drawablePadding="6sp"
+            android:hint="@string/heighthint"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_marginTop="2dp"
+            android:background="#F2F2F2" >
+        </View>
+        <EditText
+            android:id="@+id/RegInfoScale"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#FFFFE0"
+            android:drawableLeft="@drawable/scale"
+            android:drawablePadding="6sp"
+            android:hint="@string/scalehint"
+            android:textColorHint="#A3B1CA"
+            android:textSize="15sp" >
+        </EditText>
     </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" >
 
+        <TextView android:id="@+id/txtHide"
+                  android:layout_width="75dp"
+                  android:layout_height="1dp"
+                  android:layout_centerHorizontal="true" />
+        <Button
+            android:id="@+id/BtnRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register"
+            android:layout_toLeftOf="@id/txtHide"
+            android:gravity="center"
+            android:background="#29b6f6"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            android:textStyle="bold"
+          />
+        <Button
+            android:id="@+id/BtnCancelReg"
+            android:text="@string/backword"
+            android:layout_toRightOf="@id/txtHide"
+            android:background="#29b6f6"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
 
 </LinearLayout>

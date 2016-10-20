@@ -5,12 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.happypiebinliu.happymatch.R;
 
-public class RegisterActivity extends AppCompatActivity {
+public class FindPasswordActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getSupportActionBar().hide();
-        setContentView(R.layout.register);
+        setContentView(R.layout.find_password);
     }
 }
