@@ -58,12 +58,24 @@ public class HappyMatchOpenHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_PASSWORD_TABLE);
     }
 
+    /**
+     *
+     * @param sqLiteDatabase
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        // drop the exists table
-        sqLiteDatabase.execSQL(DROP_USER_TABLE);
-        sqLiteDatabase.execSQL(DROP_PASSWORD_TABLE);
-        // recreate table
-        onCreate(sqLiteDatabase);
+        switch (oldVersion) {
+            case 1:
+                onCreate(sqLiteDatabase);
+            case 2:
+                // drop the exists table
+                sqLiteDatabase.execSQL(DROP_USER_TABLE);
+                sqLiteDatabase.execSQL(DROP_PASSWORD_TABLE);
+                // recreate table
+                onCreate(sqLiteDatabase);
+            default:
+        }
     }
 }

@@ -23,4 +23,14 @@
     <string name="tip_password_null"> 密码不能为空，请输入您的。</string>
     <string name="tip_username_wrong"> 此用户尚未注册，请注册后再登录。</string>
     <string name="tip_password_wrong"> 密码错误，请重新输入，或利用邮箱找回密码。</string>
+    <string name="tip_null"> 星号标注项目是必须输入项目，请您输入完整信息。</string>
+    <string name="tip_password_not_same"> 两次输入密码不一致，请确认后重新输入。</string>
+    <string name="tip_mail_format"> 为方便您找回密码，请您输入正确的邮箱地址。</string>
+    <string name="tip_user_is_registered"> 用户名已被注册，请您换个有个性的名字吧。</string>
+
+    <string-array name="sexItems">
+        <item></item>
+        <item>女</item>
+        <item>男</item> 　
+    </string-array>
 </resources>

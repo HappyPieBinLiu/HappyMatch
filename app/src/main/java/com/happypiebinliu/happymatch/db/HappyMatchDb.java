@@ -60,11 +60,11 @@ public class HappyMatchDb {
                 new String[] { String.valueOf(userName) }, null, null, null);
         User user = new User();
         if (cursor.moveToFirst()){
-                user.setUserName(cursor.getString(cursor.getColumnIndex("user_sex")));
+                user.setUserSex(cursor.getInt(cursor.getColumnIndex("user_sex")));
                 user.setUserName(cursor.getString(cursor.getColumnIndex("user_name")));
-                user.setUserName(cursor.getString(cursor.getColumnIndex("user_mail")));
-                user.setUserName(cursor.getString(cursor.getColumnIndex("user_height")));
-                user.setUserName(cursor.getString(cursor.getColumnIndex("user_scale")));
+                user.setUserMail(cursor.getString(cursor.getColumnIndex("user_mail")));
+                user.setUserHeight(cursor.getString(cursor.getColumnIndex("user_height")));
+                user.setUserScale(cursor.getString(cursor.getColumnIndex("user_scale")));
         }
         return user;
     }
