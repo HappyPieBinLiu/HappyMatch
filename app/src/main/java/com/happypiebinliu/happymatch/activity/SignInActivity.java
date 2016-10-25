@@ -93,7 +93,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 if (checkLoginInput()) {
                     // remember the password(check on)
                     rememberPwd();
-                    intent = new Intent(SignInActivity.this, RegisterActivity.class);
+                    intent = new Intent(SignInActivity.this, MainTopActivity.class);
                     startActivity(intent);
                 }
                 break;

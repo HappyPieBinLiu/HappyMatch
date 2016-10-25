@@ -49,19 +49,19 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.register);
         dbHelper = new HappyMatchOpenHelper(this, DB_NAME, null, 1);
         // init view
-        userName = $(R.id.userName);
-        password = $(R.id.regPwd);
-        passwordAgain = $(R.id.regPwdAgain);
-        mailAddress = $(R.id.regMail);
-        height = $(R.id.regInfoheight);
-        scale = $(R.id.regInfoScale);
+        userName = getViewInfo(R.id.userName);
+        password = getViewInfo(R.id.regPwd);
+        passwordAgain = getViewInfo(R.id.regPwdAgain);
+        mailAddress = getViewInfo(R.id.regMail);
+        height = getViewInfo(R.id.regInfoheight);
+        scale = getViewInfo(R.id.regInfoScale);
         spinner = (Spinner) findViewById(R.id.regSex);
         sex = (String) spinner.getSelectedItem();
 
         // init onClickListener of the Button
-        btnRegister = $(R.id.btnRegister);
+        btnRegister = getViewInfo(R.id.btnRegister);
         btnRegister.setOnClickListener(this);
-        btnCancelReg = $(R.id.btnCancelReg);
+        btnCancelReg = getViewInfo(R.id.btnCancelReg);
         btnCancelReg.setOnClickListener(this);
 
         // happyMatchDb
@@ -156,11 +156,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
         return true;
     }
-
     /***
      * findViewById common
      */
-    public <E extends View> E $(int resId) {
+    public <E extends View> E getViewInfo(int resId) {
         return ViewUtil.findViewById(this, resId);
     }
 }

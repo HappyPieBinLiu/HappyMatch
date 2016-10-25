@@ -33,4 +33,9 @@
         <item>女</item>
         <item>男</item> 　
     </string-array>
+    <!-- home tab button -->
+    <string name="add_top">"添加上衣"</string>
+    <string name="add_low">"添加下衣"</string>
+    <string name="make_one">"组合生成"</string>
+    <string name="settings">"Me"</string>
 </resources>

@@ -34,7 +34,13 @@ public class Consts {
     public static final String USER_SCALE_FIELD = "user_scale";
     public static final String PASSWORD_FIELD = "password";
 
-
-    /***----------------------------Message------------------------------------------***/
-    public static  String loginMessage = "您已注册，不能重复注册";
+    /**
+     * 轮番图的判断
+     * //是否点击了轮番图，默认false
+     * //是否在运行，默认false
+     */
+    public static class Contant {
+        public static boolean isDown;
+        public static boolean isRun;
+    }
 }
