@@ -17,7 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.happypiebinliu.happymatch.R;
-import com.happypiebinliu.happymatch.adapter.MyAdapter;
+import com.happypiebinliu.happymatch.adapter.TakeTurnsAdapter;
 import com.happypiebinliu.happymatch.common.Consts;
 import com.happypiebinliu.happymatch.common.ViewUtil;
 import com.happypiebinliu.happymatch.viewpager.NoScrollViewPager;
@@ -37,7 +37,7 @@ public class TakeTurnsView extends LinearLayout {
     /**
      * viewpager的适配器
      */
-    private MyAdapter pagerAdapter;
+    private TakeTurnsAdapter pagerAdapter;
 
     private Handler mHandler;//消息队列，用于自动轮播
 
@@ -61,9 +61,11 @@ public class TakeTurnsView extends LinearLayout {
      */
     private FixedSpeedScroller scroller;
 
-    private int fixedTime = 200;//设置viewpager的滑动速度为200ms
+    //设置viewpager的滑动速度为200ms
+    private int fixedTime = 200;
 
-    private UpdateUI updateUI;//viewpager中ui的更新回调接口
+    //viewpager中ui的更新回调接口
+    private UpdateUI updateUI;
 
     public UpdateUI getUpdateUI() {
         return updateUI;
@@ -108,7 +110,7 @@ public class TakeTurnsView extends LinearLayout {
 
         //适配器在有了数据以后才创建
         if (pagerAdapter == null) {
-            pagerAdapter = new MyAdapter();
+            pagerAdapter = new TakeTurnsAdapter();
             take_turns_view_pager.setInfinateAdapter(mHandler, pagerAdapter);
             take_turns_view_pager.setCurrentItem(imageViews.size() * 100);
         }
@@ -279,7 +281,7 @@ public class TakeTurnsView extends LinearLayout {
     }
 
     private void initView() {
-        root = LayoutInflater.from(getContext()).inflate(R.layout.take_turn, this);
+        root = LayoutInflater.from(getContext()).inflate(R.layout.base_take_turn, this);
         take_turns_view_pager = (NoScrollViewPager) root.findViewById(R.id.take_turns_view_pager);
         take_turns_radio_group = (RadioGroup) root.findViewById(R.id.take_turns_radio_group);
         imageViews = new ArrayList<>();

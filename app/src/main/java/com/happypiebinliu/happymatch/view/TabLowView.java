@@ -43,7 +43,7 @@ public class TabLowView extends LinearLayout implements View.OnClickListener{
 
     }
 
-    public void initData(TabLowItem tabItem){
+    public void initData(TabItem tabItem){
 
         mTabImage.setImageResource(tabItem.imageResId);
         mTabLabel.setText(tabItem.labelResId);
@@ -53,5 +53,8 @@ public class TabLowView extends LinearLayout implements View.OnClickListener{
     @Override
     public void onClick(View view) {
 
+    }
+    public void onDataChanged(int badgeCount) {
+        //  TODO notify new message, change the badgeView
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * Created by 浩 on 2016/8/30.
  * 处理viewpager的轮番适配器
  */
-public class MyAdapter extends PagerAdapter {
+public class TakeTurnsAdapter extends PagerAdapter {
 
     private List<ImageView> mImageViews;
 

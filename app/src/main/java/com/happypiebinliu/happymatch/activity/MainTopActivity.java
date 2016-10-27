@@ -1,65 +1,50 @@
 package com.happypiebinliu.happymatch.activity;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.happypiebinliu.happymatch.Fragment.BaseFragment;
+import com.happypiebinliu.happymatch.Fragment.MatchAddFragment;
+import com.happypiebinliu.happymatch.Fragment.MatchCreateFragment;
+import com.happypiebinliu.happymatch.Fragment.MatchFragment;
+import com.happypiebinliu.happymatch.Fragment.MatchMoreFragment;
 import com.happypiebinliu.happymatch.R;
 import com.happypiebinliu.happymatch.common.ViewUtil;
-import com.happypiebinliu.happymatch.view.TabLowItem;
+import com.happypiebinliu.happymatch.view.TabItem;
 import com.happypiebinliu.happymatch.view.TabLowLayout;
-import com.happypiebinliu.happymatch.view.TakeTurnsView;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MainTopActivity extends AppCompatActivity implements View.OnClickListener, TabLowLayout.OnTabClickListener {
+public class MainTopActivity extends AppCompatActivity implements TabLowLayout.OnTabClickListener {
 
-    private TakeTurnsView takeTurnsViewTop;
-    private TakeTurnsView takeTurnsViewLow;
     private TabLowLayout mTabLowLayout;
+    private ArrayList<TabItem> tabs;
+    private ActionBar actionBar;
+    private ViewPager mViewPager;
+    BaseFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 隐藏标题
-        this.getSupportActionBar().hide();
         setContentView(R.layout.main_top);
 
-        // 上衣轮番图
-        takeTurnsViewTop = getViewInfo(R.id.take_turns_view_top);
-        // 下衣轮番图
-        takeTurnsViewLow = getViewInfo(R.id.take_turns_view_low);
+        // ================Tab=============================
         // 底部Ｔａｂ栏的初始化
-        mTabLowLayout=(TabLowLayout)findViewById(R.id.tab_layout);
+        mTabLowLayout = getViewInfo(R.id.tab_layout);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.main);
+        }
+        // Tab内容设定
         initData();
-        takeTurnsViewTop.setTakeTurnsHeight(300);
-        drawables.add(getResources().getDrawable(R.drawable.i1));
-        drawables.add(getResources().getDrawable(R.drawable.i2));
-        takeTurnsViewTop.setImageUrls(drawables);
-        takeTurnsViewLow.setImageUrls(drawables);
-
-        takeTurnsViewTop.setUpdateUI(new TakeTurnsView.UpdateUI() {
-            @Override
-            public void onUpdateUI(int position) {
-                Log.i("test", "当前图片位置：" + position);
-            }
-
-            @Override
-            public void onItemClick(int position, ImageView imageView) {
-                Toast.makeText(MainTopActivity.this, "当前图片位置：" + position + "  id:" + imageView.getId(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    List<Drawable> drawables = new ArrayList<>();
-
-    private void removeDrawables() {
-        drawables.remove(0);
+        // ================Tab=============================
     }
 
     /**
@@ -67,32 +52,41 @@ public class MainTopActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void initData(){
 
-        ArrayList<TabLowItem>tabs=new ArrayList<TabLowItem>();
-        // 添加上衣图片按钮
-        tabs.add(new TabLowItem(R.drawable.hometopbtn,R.string.add_top));
-        // 添加下衣服衣图片按钮
-        tabs.add(new TabLowItem(R.drawable.homelowbtn,R.string.add_low));
-        // 组合生成按钮
-        tabs.add(new TabLowItem(R.drawable.topandlow,R.string.make_one));
-        // Me自我设定按钮
-        tabs.add(new TabLowItem(R.drawable.me,R.string.settings));
+        // selector 实现动态的ｔａｂ的颜色变换＊＊＊＊
+        tabs = new ArrayList<>();
+        // Me主画面Tap
+        tabs.add(new TabItem(R.drawable.selector_tab_me, R.string.main, MatchFragment.class));
+        // 添加图片tap
+        tabs.add(new TabItem(R.drawable.selector_tab_add, R.string.add, MatchAddFragment.class));
+        // 组合生成tap
+        tabs.add(new TabItem(R.drawable.selector_tab_create, R.string.make_one, MatchCreateFragment.class));
+        // 更多设置tap
+        tabs.add(new TabItem(R.drawable.selector_tab_setting_more, R.string.setting_more, MatchMoreFragment.class));
 
         mTabLowLayout.initData(tabs, this);
+        mTabLowLayout.setCurrentTab(0);
 
-    }
+      FragAdapter adapter = new FragAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-    /**
-     * 各个按钮的事件响应
-     * @param view
-     */
-    @Override
-    public void onClick(View view) {
-    }
+            }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        takeTurnsViewTop.onPause();
+            @Override
+            public void onPageSelected(int position) {
+                mTabLowLayout.setCurrentTab(position);
+                actionBar.setTitle(tabs.get(position).labelResId);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
 
     @Override
@@ -108,7 +102,36 @@ public class MainTopActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    public void onTabClick(TabLowItem tabItem) {
+    public void onTabClick(TabItem tabItem) {
+
+        actionBar.setTitle(tabItem.labelResId);
+        mViewPager.setCurrentItem(tabs.indexOf(tabItem));
+
+    }
+    public class FragAdapter extends FragmentPagerAdapter {
+
+
+        public FragAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int arg0) {
+            try {
+                return tabs.get(arg0).tagFragmentClz.newInstance();
+
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return tabs.size();
+        }
 
     }
 }

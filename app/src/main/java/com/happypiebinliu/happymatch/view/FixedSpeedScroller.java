@@ -5,7 +5,6 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 /**
- * Created by 浩 on 2016/8/31.
  * 重写scroller来控制viewpager的滑动速度
  */
 public class FixedSpeedScroller extends Scroller {

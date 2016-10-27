@@ -6,20 +6,22 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.happypiebinliu.happymatch.adapter.MyAdapter;
+import com.happypiebinliu.happymatch.adapter.TakeTurnsAdapter;
 import com.happypiebinliu.happymatch.common.Consts;
 
 /**
  * 传入onScroll 控制当前 viewpager
  */
 public class NoScrollViewPager extends ViewPager {
-    private boolean noScroll = false;//false可以滑动；true则不能滑动
-    private Handler handler;//自动轮番的消息机制
+
+    //false可以滑动；true则不能滑动
+    private boolean noScroll = false;
+    //自动轮番的消息机制
+    private Handler handler;
 
 
     public NoScrollViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO Auto-generated constructor stub
     }
 
     public NoScrollViewPager(Context context) {
@@ -75,7 +77,7 @@ public class NoScrollViewPager extends ViewPager {
         return super.dispatchTouchEvent(ev);
     }
 
-    public void setInfinateAdapter(Handler handler, MyAdapter adapter) {
+    public void setInfinateAdapter(Handler handler, TakeTurnsAdapter adapter) {
         this.handler = handler;
         setAdapter(adapter);
     }

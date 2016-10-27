@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".activity.MainTopActivity">
 
-    <include layout="@layout/take_turns_layout" />
+    <FrameLayout
+        android:visibility="gone"
+        android:id="@+id/fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tab_layout"
+        />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_above="@id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
-</FrameLayout>
+    <com.happypiebinliu.happymatch.view.TabLowLayout
+        android:id="@+id/tab_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        />
+
+</RelativeLayout>

@@ -14,8 +14,10 @@ import java.util.ArrayList;
 
 public class TabLowLayout extends LinearLayout implements View.OnClickListener {
 
-    private ArrayList<TabLowItem> tabs;
+    private ArrayList<TabItem> tabs;
     private OnTabClickListener listener;
+    private View selectView;
+    private int tabCount;
 
     public TabLowLayout(Context context) {
         super(context);
@@ -35,15 +37,40 @@ public class TabLowLayout extends LinearLayout implements View.OnClickListener {
     private void initView(){
         setOrientation(HORIZONTAL);
     }
-    public void initData(ArrayList<TabLowItem>tabs, OnTabClickListener listener){
-        this.tabs = tabs;
-        this.listener = listener;
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+
+    /**
+     * 设定当前的Ｔａｂ
+     * @param i
+     */
+    public void setCurrentTab(int i) {
+        if (i < tabCount && i >= 0) {
+            View view = getChildAt(i);
+            if (selectView != view) {
+                view.setSelected(true);
+                if (selectView != null) {
+                    selectView.setSelected(false);
+                }
+                selectView = view;
+            }
+        }
+    }
+
+    public void onDataChanged(int i, int badgeCount) {
+        if (i < tabCount && i >= 0) {
+            TabLowView view = (TabLowView) getChildAt(i);
+            view.onDataChanged(badgeCount);
+        }
+    }
+    public void initData(ArrayList<TabItem> tabs, OnTabClickListener listener){
+        this.tabs=tabs;
+        this.listener=listener;
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
         params.weight=1;
-        if (tabs != null && tabs.size() > 0){
+        if(tabs!=null&&tabs.size()>0){
+            tabCount=tabs.size();
             TabLowView mTabView=null;
-            for(int i = 0; i < tabs.size(); i++){
-                mTabView = new TabLowView(getContext());
+            for(int i=0;i< tabs.size();i++){
+                mTabView=new TabLowView(getContext());
                 mTabView.setTag(tabs.get(i));
                 mTabView.initData(tabs.get(i));
                 mTabView.setOnClickListener(this);
@@ -51,16 +78,19 @@ public class TabLowLayout extends LinearLayout implements View.OnClickListener {
             }
 
         }else{
-
             throw new IllegalArgumentException("tabs can not be empty");
         }
+
     }
+
     @Override
-    public void onClick(View view) {
+    public void onClick(View v) {
+
+        listener.onTabClick((TabItem) v.getTag());
 
     }
     public interface OnTabClickListener{
 
-        void onTabClick(TabLowItem tabItem);
+        void onTabClick(TabItem tabItem);
     }
 }
