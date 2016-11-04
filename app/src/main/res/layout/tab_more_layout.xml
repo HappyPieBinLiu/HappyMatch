@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:text="微信号：JueWYQ" />
+                android:text="User：JueWYQ" />
 
         </RelativeLayout>
 
@@ -90,7 +90,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/imageView3"
-                android:text="我的相册"
+                android:text="通知"
                 android:textColor="#000" />
 
             <ImageView
@@ -126,7 +126,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/imageView3"
-                android:text="我的收藏"
+                android:text="设定"
                 android:textColor="#000" />
 
             <ImageView
@@ -161,7 +161,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/imageView5"
-                android:text="我的银行卡"
+                android:text="用户反馈"
                 android:textColor="#000" />
 
             <ImageView
@@ -198,7 +198,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/imageView1"
-            android:text="表情商店"
+            android:text="推荐好友"
             android:textColor="#000" />
 
         <ImageView
@@ -234,7 +234,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/imageView1"
-            android:text="设置"
+            android:text="清除缓存"
             android:textColor="#000" />
 
         <ImageView
