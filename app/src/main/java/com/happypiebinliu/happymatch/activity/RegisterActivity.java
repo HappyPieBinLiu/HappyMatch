@@ -25,7 +25,7 @@ import static com.happypiebinliu.happymatch.common.Consts.DB_NAME;
 import static com.happypiebinliu.happymatch.common.Consts.PASSWORD_TABLE;
 import static com.happypiebinliu.happymatch.common.Consts.USER_TABLE;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private HappyMatchOpenHelper dbHelper;
     private ProgressDialog progressDialog;
@@ -72,10 +72,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
         Intent intent;
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnRegister:
                 // Check the input information
-                if (inputCheckReg()){
+                if (inputCheckReg()) {
                     userInfoInsert();
                     intent = new Intent(RegisterActivity.this, SignInActivity.class);
                     startActivity(intent);
@@ -92,6 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
+
     private void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
@@ -100,6 +101,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
         progressDialog.show();
     }
+
     private void userInfoInsert() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         // transaction start
@@ -107,22 +109,28 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         try {
             // insert the user information
             ContentValues values = new ContentValues();
-            if (!TextUtils.isEmpty(userName.getText())) values.put(Consts.USER_NAME_FIELD, userName.getText().toString());
-            if (!TextUtils.isEmpty(mailAddress.getText()))  values.put(Consts.USER_MAIL_FIELD, mailAddress.getText().toString());
+            if (!TextUtils.isEmpty(userName.getText()))
+                values.put(Consts.USER_NAME_FIELD, userName.getText().toString());
+            if (!TextUtils.isEmpty(mailAddress.getText()))
+                values.put(Consts.USER_MAIL_FIELD, mailAddress.getText().toString());
             if (!TextUtils.isEmpty(sex)) values.put(Consts.USER_SEX_FIELD, sex);
-            if (!TextUtils.isEmpty(height.getText())) values.put(Consts.USER_HEIGHT_FIELD, height.getText().toString());
-            if (!TextUtils.isEmpty(scale.getText())) values.put(Consts.USER_SCALE_FIELD, scale.getText().toString());
+            if (!TextUtils.isEmpty(height.getText()))
+                values.put(Consts.USER_HEIGHT_FIELD, height.getText().toString());
+            if (!TextUtils.isEmpty(scale.getText()))
+                values.put(Consts.USER_SCALE_FIELD, scale.getText().toString());
             db.insert(USER_TABLE, null, values);
             values.clear();
             // insert the user's password information
-            if (!TextUtils.isEmpty(userName.getText())) values.put(Consts.USER_NAME_FIELD, userName.getText().toString());
-            if (!TextUtils.isEmpty(password.getText())) values.put(Consts.PASSWORD_FIELD, password.getText().toString());
+            if (!TextUtils.isEmpty(userName.getText()))
+                values.put(Consts.USER_NAME_FIELD, userName.getText().toString());
+            if (!TextUtils.isEmpty(password.getText()))
+                values.put(Consts.PASSWORD_FIELD, password.getText().toString());
             db.insert(PASSWORD_TABLE, null, values);
             values.clear();
             db.setTransactionSuccessful();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             // transaction end
             db.endTransaction();
         }
@@ -134,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Boolean inputCheckReg() {
         // required fields check
         if (TextUtils.isEmpty(userName.getText()) || TextUtils.isEmpty(password.getText())
-                    ||TextUtils.isEmpty(passwordAgain.getText()) || TextUtils.isEmpty(mailAddress.getText())) {
+                || TextUtils.isEmpty(passwordAgain.getText()) || TextUtils.isEmpty(mailAddress.getText())) {
             Toast.makeText(this, R.string.tip_null, Toast.LENGTH_LONG).show();
             return false;
         }
@@ -150,12 +158,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return false;
         }
         // mail address format check
-        if (!Patterns.EMAIL_ADDRESS.matcher(mailAddress.getText()).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(mailAddress.getText()).matches()) {
             Toast.makeText(this, R.string.tip_mail_format, Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
     }
+
     /***
      * findViewById common
      */

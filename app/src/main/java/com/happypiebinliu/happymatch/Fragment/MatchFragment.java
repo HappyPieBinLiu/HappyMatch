@@ -27,9 +27,10 @@ public class MatchFragment extends BaseFragment implements ITabClickListener {
     private BaseSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mListView;
     private LinearLayoutManager layoutManager;
-    MatchMeAdapter adapter;
+    private MatchMeAdapter adapter;
     private TakeTurnsView takeTurnsViewTop;
     private TakeTurnsView takeTurnsViewLow;
+    private List<Drawable> drawables = new ArrayList<>();
 
     @Override
     public void fetchData() {
@@ -40,12 +41,12 @@ public class MatchFragment extends BaseFragment implements ITabClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_me_layout, container, false);
         mSwipeRefreshLayout = (BaseSwipeRefreshLayout) view.findViewById(R.id.refresh_layout);
-        mListView = (RecyclerView) view.findViewById(R.id.list);
+        //mListView = (RecyclerView) view.findViewById(R.id.list);
         this.layoutManager = new LinearLayoutManager(this.getContext());
         this.layoutManager.setOrientation(1);
-        this.mListView.setLayoutManager(this.layoutManager);
-        adapter = new MatchMeAdapter();
-        mListView.setAdapter(adapter);
+        //this.mListView.setLayoutManager(this.layoutManager);
+        //adapter = new MatchMeAdapter();
+        //mListView.setAdapter(adapter);
 
         // ================轮番图=============================
         // 上衣轮番图
@@ -77,11 +78,6 @@ public class MatchFragment extends BaseFragment implements ITabClickListener {
         });
         // ================轮番图=============================
         return view;
-    }
-    List<Drawable> drawables = new ArrayList<>();
-
-    private void removeDrawables() {
-        drawables.remove(0);
     }
 
     private void getData() {

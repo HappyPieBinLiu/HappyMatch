@@ -1,12 +1,16 @@
 package com.happypiebinliu.happymatch.common;
 
 /**
- * Created by ope001 on 2016/10/14.
+ * 静态变量
+ * 多国语言的实现还未考虑？？预留项目
+ * Created by Bin.Liu on 2016/10/14.
  */
 
 public class Consts {
 
-    /***-----------------------------------UI-----------------------------------------***/
+    /***
+     * -----------------------------------UI-----------------------------------------
+     ***/
     public static String REGISTER = "注册";
     public static String SHAREPREFER_FILE_USERINFO = "userInfo";
     public static String USER_NAME = "USER_NAME";
@@ -36,11 +40,13 @@ public class Consts {
 
     /**
      * 轮番图的判断
-     * //是否点击了轮番图，默认false
-     * //是否在运行，默认false
+     * isDown 是否点击了轮番图，默认false
+     * isRun 是否在运行，默认false
      */
     public static class Contant {
         public static boolean isDown;
         public static boolean isRun;
     }
+    //--------Message-------------------------------------------------------
+    public static final String TabLowItemIsEmpty = "TabLowItem 底部Ｔａｂ栏的内容为空！！";
 }

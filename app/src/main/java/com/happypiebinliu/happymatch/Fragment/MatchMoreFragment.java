@@ -12,7 +12,7 @@ import com.happypiebinliu.happymatch.common.ITabClickListener;
  * Created by B.Liu on 2016/10/27.
  */
 
-public class MatchMoreFragment extends BaseFragment implements ITabClickListener{
+public class MatchMoreFragment extends BaseFragment implements ITabClickListener {
     @Override
     public void fetchData() {
 

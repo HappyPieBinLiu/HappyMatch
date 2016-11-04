@@ -31,11 +31,25 @@
     <string-array name="sexItems">
         <item></item>
         <item>女</item>
-        <item>男</item> 　
+        <item>男</item>
+        　
     </string-array>
     <!-- home tab button -->
     <string name="main">"Match"</string>
     <string name="add">"添加"</string>
     <string name="make_one">"组合"</string>
     <string name="setting_more">更多</string>
+    <!-- Add tab button -->
+    <string name="selectbutton">" 选择 "</string>
+    <string name="uploadbutton">" 上传 "</string>
+    <string name="changebutton">" 转换 "</string>
+    <string name="radiotypesimple">" 简单裁切 "</string>
+    <string name="radiotypesimplex">" 精细裁切 "</string>
+    <string name="addline">" 请添加腰部缝合线 "</string>
+
+    <!-- Create tab button -->
+    <string name="createbutton">" 合成 "</string>
+    <string name="modifybutton">" 调整 "</string>
+    <string name="sharebutton">" 分享 "</string>
+
 </resources>

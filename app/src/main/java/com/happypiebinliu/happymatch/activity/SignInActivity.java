@@ -27,7 +27,7 @@ import com.happypiebinliu.happymatch.model.User;
 import static com.happypiebinliu.happymatch.common.Consts.REGISTER;
 import static com.happypiebinliu.happymatch.common.Consts.SHAREPREFER_FILE_USERINFO;
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView txtRegisterLink;
     private Intent intent;
@@ -86,14 +86,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             // login
             case R.id.btnLogin:
                 // user account is right, move to the main activity
                 if (checkLoginInput()) {
                     // remember the password(check on)
                     rememberPwd();
-                    intent = new Intent(SignInActivity.this, MainTopActivity.class);
+                    intent = new Intent(SignInActivity.this, MainMatchActivity.class);
                     startActivity(intent);
                 }
                 break;
@@ -118,7 +118,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             editorSp.putString(Consts.USER_NAME, userName.getText().toString());
             editorSp.putString(Consts.PASSWORD, password.getText().toString());
             editorSp.putBoolean(Consts.ISCHECK, true);
-        }else {
+        } else {
             // check off
             editorSp.clear();
         }
@@ -136,7 +136,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             userName.setText(sharePrefer.getString(Consts.USER_NAME, ""));
             password.setText(sharePrefer.getString(Consts.PASSWORD, ""));
             rememberCb.setChecked(true);
-        }else {
+        } else {
             // check off
             userName.setText("");
             password.setText("");
@@ -147,15 +147,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     /***
      * before of login ,  check the input information
      */
-    private boolean checkLoginInput(){
+    private boolean checkLoginInput() {
 
         // userName can not be null.
-        if (userName == null || "".equals(userName)){
+        if (userName == null || "".equals(userName)) {
             Toast.makeText(this, R.string.tip_username_null, Toast.LENGTH_LONG).show();
             return false;
         }
         // password can not be null.
-        if (password == null || "".equals(password)){
+        if (password == null || "".equals(password)) {
             Toast.makeText(this, R.string.tip_password_null, Toast.LENGTH_LONG).show();
             return false;
         }
@@ -165,11 +165,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             // password
             Password pwd = db.selectPasswordInfo(user.getUserName());
             // password is wrong
-            if (!pwd.getPassword().equals(password.getText().toString())){
+            if (!pwd.getPassword().equals(password.getText().toString())) {
                 Toast.makeText(this, R.string.tip_password_wrong, Toast.LENGTH_LONG).show();
                 return false;
             }
-        }else {
+        } else {
             // the account is not register
             Toast.makeText(this, R.string.tip_username_wrong, Toast.LENGTH_LONG).show();
             return false;

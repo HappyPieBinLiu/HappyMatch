@@ -16,6 +16,7 @@ public class NoScrollViewPager extends ViewPager {
 
     //false可以滑动；true则不能滑动
     private boolean noScroll = false;
+
     //自动轮番的消息机制
     private Handler handler;
 

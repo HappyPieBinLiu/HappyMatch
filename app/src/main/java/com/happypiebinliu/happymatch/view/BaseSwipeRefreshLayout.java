@@ -9,7 +9,7 @@ import com.happypiebinliu.happymatch.R;
 import com.happypiebinliu.happymatch.common.ViewUtil;
 
 /**
- * Created by Administrator on 2016/10/23 0023.
+ * Created by  on 2016/10/23.
  */
 
 public class BaseSwipeRefreshLayout extends SwipeRefreshLayout {
@@ -25,7 +25,7 @@ public class BaseSwipeRefreshLayout extends SwipeRefreshLayout {
 
     private void init() {
         this.setProgressViewOffset(false, ViewUtil.dip2px(this.getContext(), -50.0F), ViewUtil.dip2px(this.getContext(), 30.0F));
-        this.setColorSchemeColors(new int[]{this.getContext().getResources().getColor(R.color.tab_green)});
+        this.setColorSchemeColors(new int[]{this.getContext().getResources().getColor(R.color.tab_blue)});
     }
 
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {

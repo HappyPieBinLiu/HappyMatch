@@ -27,13 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by 浩 on 2016/8/30.
- * 轮番图
+ * Created Bin.Liu on 2016/10/21.
+ * Match 画面的轮番图（Ｔｏｐ　ａｎｄ　Ｌｏｗ）
  */
 public class TakeTurnsView extends LinearLayout {
-    private View root;//根布局
-    public NoScrollViewPager take_turns_view_pager;//改造后的viewpager
-    private RadioGroup take_turns_radio_group;//存放轮番图下标的radiogroup
+
+    //根布局
+    private View root;
+    // 自己重塑的ＶｉｅｗＰａｇｅｒ
+    public NoScrollViewPager take_turns_view_pager;
+    //存放轮番图下标的radiogroup　小点点［。。。。。］
+    private RadioGroup take_turns_radio_group;
     /**
      * viewpager的适配器
      */
@@ -468,7 +472,9 @@ public class TakeTurnsView extends LinearLayout {
     }
 
 
-    /**设置当前viewpager的ontouch事件，用于解决和外部ontouch的冲突
+    /**
+     * 设置当前viewpager的ontouch事件，用于解决和外部ontouch的冲突
+     *
      * @param touchListener
      */
     public void setTouchListener(OnTouchListener touchListener) {

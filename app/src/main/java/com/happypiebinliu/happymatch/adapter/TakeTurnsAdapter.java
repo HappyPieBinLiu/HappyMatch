@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import java.util.List;
 
 /**
- * Created by 浩 on 2016/8/30.
+ * Created by Bin.Liu on 2016/10/27.
  * 处理viewpager的轮番适配器
  */
 public class TakeTurnsAdapter extends PagerAdapter {
@@ -43,7 +43,7 @@ public class TakeTurnsAdapter extends PagerAdapter {
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        if (mImageViews==null||mImageViews.size() < 1) return;
+        if (mImageViews == null || mImageViews.size() < 1) return;
         container.removeView(mImageViews.get(position % mImageViews.size()));
 
     }
@@ -55,7 +55,7 @@ public class TakeTurnsAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        if (mImageViews==null||mImageViews.size() < 1) return null;
+        if (mImageViews == null || mImageViews.size() < 1) return null;
         try {
             //有时候添加的视图会未没上个父view移除，所以这里抛出异常
             container.addView(mImageViews.get(position % mImageViews.size()), 0);

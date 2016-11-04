@@ -1,6 +1,7 @@
 package com.happypiebinliu.happymatch.model;
 
 /**
+ * Ｕｓｅｒ　对象
  * Created by B.Liu on 2016/10/18.
  */
 
