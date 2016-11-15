@@ -49,4 +49,5 @@ public class Consts {
     }
     //--------Message-------------------------------------------------------
     public static final String TabLowItemIsEmpty = "TabLowItem 底部Ｔａｂ栏的内容为空！！";
+
 }

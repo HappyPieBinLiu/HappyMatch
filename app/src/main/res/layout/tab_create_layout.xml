@@ -13,7 +13,6 @@
 
     <LinearLayout
         android:id="@+id/layoutBtnCreate"
-        android:background="@drawable/border"
         android:orientation="horizontal"
         android:layout_centerVertical="true"
         android:layout_width="match_parent"
@@ -26,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:gravity="center"
-            android:background="#29b6f6"
+            android:background="@drawable/selector_button_color"
             android:textColor="#ffffff"
             android:textSize="20dp"
             android:textStyle="bold"/>
@@ -39,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:gravity="center"
-            android:background="#29b6f6"
+            android:background="@drawable/selector_button_color"
             android:textColor="#ffffff"
             android:textSize="20dp"
             android:textStyle="bold"/>
@@ -53,7 +52,7 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:gravity="center"
-            android:background="#29b6f6"
+            android:background="@drawable/selector_button_color"
             android:textColor="#ffffff"
             android:textSize="20dp"
             android:textStyle="bold"/>

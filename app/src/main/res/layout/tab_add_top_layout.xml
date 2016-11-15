@@ -3,6 +3,11 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/TopImage"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
 
     <LinearLayout
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -13,39 +18,39 @@
         android:layout_height="0dp">
 
         <LinearLayout
-            android:id="@+id/layoutBtnLow"
+            android:id="@+id/layoutBtnTop"
             android:orientation="horizontal"
             android:layout_centerVertical="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
-                android:id="@+id/btnSelectLow"
+                android:id="@+id/btnSelectTop"
                 android:text="@string/selectbutton"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:gravity="center"
-                android:background="#29b6f6"
+                android:background="@drawable/selector_button_color"
                 android:textColor="#ffffff"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/btnUploadLow"
+                android:id="@+id/btnUploadTop"
                 android:text="@string/uploadbutton"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:gravity="center"
-                android:background="#29b6f6"
+                android:background="@drawable/selector_button_color"
                 android:textColor="#ffffff"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/btnChangeLow"
+                android:id="@+id/btnChangeTop"
                 android:text="@string/changebutton"
                 android:layout_weight="1"
                 android:layout_width="0dp"
@@ -53,7 +58,7 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:gravity="center"
-                android:background="#29b6f6"
+                android:background="@drawable/selector_button_color"
                 android:textColor="#ffffff"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
@@ -71,7 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:background="#29b6f6"
+                android:background="@drawable/selector_button_color"
                 android:textColor="#ffffff"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
@@ -84,14 +89,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:background="#29b6f6"
+                android:background="@drawable/selector_button_color"
                 android:textColor="#ffffff"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
 
         </LinearLayout>
         <Button
-            android:id="@+id/addLineLowBtn"
+            android:id="@+id/addLineTopBtn"
             android:text="@string/addline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,10 +118,5 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
-    <ImageView
-        android:id="@+id/lowImage"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="0dp"/>
 
 </LinearLayout>

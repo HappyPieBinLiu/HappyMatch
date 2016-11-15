@@ -13,21 +13,20 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
-/**
- * 
- * 1. ��ε�֪�û�������ĸ�Ԫ�� 2. ���ȡ�ñ����Ԫ�ص���Ϣ 3. ���ͨ��layout�����ػ����ˮ���� 4. ����ӳ�up�¼��ķַ�
- * 
- */
+import static android.R.attr.action;
+
 public class WaveView extends LinearLayout {
+
 	private View mTargetTouchView;
 	private Paint mHalfTransPaint;
 	private Paint mTransPaint;
-	private float[] mDownPositon;// ��ָ��������꣬Ҳ����Բ�������ĵ�
-	private float rawRadius;// ԭʼ��Բ���뾶
-	private float drawedRadius;// �����������Ƶ�Բ���뾶
-	private float drawingRadiusDegrees = 10;//��������Բ����ʱ�򣬰뾶�ĵ����ٷֱ�
+	private float[] mDownPosition;
+	private float rawRadius;
+	private float drawedRadius;
+	private float drawingRadiusDegrees = 10;
 	private static final long INVALID_DURATION = 30;
 	private static postUpEventDelayed delayedRunnable;
+
 	public void init() {
 		setOrientation(VERTICAL);
 		mHalfTransPaint = new Paint();
@@ -36,52 +35,57 @@ public class WaveView extends LinearLayout {
 		mTransPaint = new Paint();
 		mTransPaint.setColor(Color.parseColor("#00ffffff"));
 		mTransPaint.setAntiAlias(true);
-		mDownPositon = new float[2];
+		mDownPosition = new float[2];
 		delayedRunnable = new postUpEventDelayed();
 	}
 
+	/***
+	 * 我们在这里进行拦截单击事件
+	 * @param ev
+	 * @return
+     */
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
+
 		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
 			mTargetTouchView = null;
 			drawedRadius = 0;
+			// 得到屏幕相对坐标
 			float x = ev.getRawX();
 			float y = ev.getRawY();
 			mTargetTouchView = findTargetView(x, y, this);
 			if(mTargetTouchView!=null){
 				Button msg = (Button) mTargetTouchView;
 				RectF targetTouchRectF = getViewRectF(mTargetTouchView);
-				mDownPositon = getCircleCenterPostion(x, y);
-				// ��Ҫ���Ƶ�Բ�������ĵ�
-				float circleCenterX = mDownPositon[0];
-				float circleCenterY = mDownPositon[1];
-				/**
-				 * Բ���İ뾶�� Բ�������ĵ�Բ�ĵ�Ȼ�ǵ�����Ǹ��㣬���ǰ뾶�Ǳ仯��
-				 * Բ�Ŀ�������mTargetTouchView������������λ֮�ڣ�����Ҫ��Բ�����Ƹ�������mTargetTouchView
-				 * ��radius��ȡֵΪԲ�ĵĺ����굽mTargetTouchView���ĸ���ľ����е����ֵ
-				 */
+				mDownPosition = getCircleCenterPosition(x, y);
+
+				float circleCenterX = mDownPosition[0];
+				float circleCenterY = mDownPosition[1];
 				float left = circleCenterX - targetTouchRectF.left;
 				float right = targetTouchRectF.right - circleCenterX;
 				float top = circleCenterY - targetTouchRectF.top;
 				float bottom = targetTouchRectF.bottom - circleCenterY;
-				// ���������ֵ��Ϊ�뾶
+
 				rawRadius = Math.max(bottom, Math.max(Math.max(left, right), top));
 				postInvalidateDelayed(INVALID_DURATION);
 			}
 		}else if (ev.getAction() == MotionEvent.ACTION_UP) {
-			// ��Ҫ�ò��ƻ�����Ϻ���ִ����up��ִ�еķ���
-//			if(drawedRadius==0){
-//				return false;
-//			}
-//			long totalTime = (long) (INVALID_DURATION * (drawingRadiusDegrees+5));
-//			// �벨�ƽ�����ʱ��
-//			long time = (long) (totalTime - drawedRadius*totalTime / rawRadius);
+
 			delayedRunnable.event = ev;
+			// 延迟　增加水波效果
+			postDelayed(delayedRunnable, 400);
 			return true;
+
+		} else if (action == MotionEvent.ACTION_CANCEL) {
+
+			postInvalidateDelayed(INVALID_DURATION);
 		}
 		return super.dispatchTouchEvent(ev);
 	}
 
+	/***
+	 * 延迟处理
+	 */
 	class postUpEventDelayed implements Runnable{
 		private MotionEvent event;
 		@Override
@@ -92,44 +96,49 @@ public class WaveView extends LinearLayout {
 			}
 		}
 	}
-	
+
+	/***
+	 * 绘制波纹
+	 * @param canvas
+     */
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		super.dispatchDraw(canvas);
-		/**
-		 * ��������Ԫ�غ�ʼ���Ʋ���
-		 */
+
 		if (mTargetTouchView != null) {
 			RectF clipRectF = clipRectF(mTargetTouchView);
 			canvas.save();
-			// Ϊ�˲��û��Ƶ�Բ��������Ҫ���Ƶķ�Χ
+
 			canvas.clipRect(clipRectF);
 			if(drawedRadius < rawRadius){
 				drawedRadius += rawRadius / drawingRadiusDegrees;
-				canvas.drawCircle(mDownPositon[0], mDownPositon[1], drawedRadius, mHalfTransPaint);
+				canvas.drawCircle(mDownPosition[0], mDownPosition[1], drawedRadius, mHalfTransPaint);
 				postInvalidateDelayed(INVALID_DURATION);
 			}else{
-				canvas.drawCircle(mDownPositon[0], mDownPositon[1], rawRadius, mTransPaint);
+				canvas.drawCircle(mDownPosition[0], mDownPosition[1], rawRadius, mTransPaint);
 				post(delayedRunnable);
 			}
 			canvas.restore();
 		}
 	}
-	
-	/**
-	 * ��ȡԲ������������
-	 */
-	public float[] getCircleCenterPostion(float x,float y){
+
+	/***
+	 *  获取中心坐标
+	 * @param x
+	 * @param y
+     * @return
+     */
+	public float[] getCircleCenterPosition(float x,float y){
 		int[] location = new int[2];
-		float[] mDownPositon = new float[2];
+		float[] mDownPosition = new float[2];
 		getLocationOnScreen(location );
-		mDownPositon[0] = x;
-		mDownPositon[1] = y -location[1];
-		return mDownPositon;
+		mDownPosition[0] = x;
+		mDownPosition[1] = y -location[1];
+		return mDownPosition;
 	}
  
 	/**
-	 * ��ȡҪ���е�����
+	 *
 	 * @param mTargetTouchView
 	 * @return
 	 */
@@ -143,12 +152,11 @@ public class WaveView extends LinearLayout {
 	}
 	
 	/**
-	 * Ѱ��Ŀ��view
-	 * 
+	 * 遍历 view 找到我们点击的view
+	 * 落在屏幕范围内的view
 	 * @param x
 	 * @param y
 	 * @param anchorView
-	 *            ���ĸ�view��ʼ����Ѱ��
 	 * @return
 	 */
 	public View findTargetView(float x, float y, View anchorView) {
@@ -157,7 +165,6 @@ public class WaveView extends LinearLayout {
 		for (View child : touchablesView) {
 			RectF rectF = getViewRectF(child);
 			if (rectF.contains(x, y) && child.isClickable()) {
-				// ��˵���������view�ҵ���
 				targetView = child;
 				break;
 			}
@@ -165,6 +172,11 @@ public class WaveView extends LinearLayout {
 		return targetView;
 	}
 
+	/***
+	 * 得到被点击View的信息
+	 * @param view
+	 * @return
+     */
 	public RectF getViewRectF(View view) {
 		int[] location = new int[2];
 		view.getLocationOnScreen(location);

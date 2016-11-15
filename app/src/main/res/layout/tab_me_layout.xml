@@ -6,10 +6,5 @@
     android:fitsSystemWindows="true">
 
     <include layout="@layout/tab_match_turns"/>
-<!--
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />-->
 
 </com.happypiebinliu.happymatch.view.BaseSwipeRefreshLayout>

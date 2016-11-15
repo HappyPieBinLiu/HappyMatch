@@ -19,7 +19,7 @@ import com.happypiebinliu.happymatch.view.TabLowLayout;
 
 import java.util.ArrayList;
 
-public class MainMatchActivity extends AppCompatActivity implements TabLowLayout.OnTabClickListener {
+public class MainMatchActivity extends AppCompatActivity implements TabLowLayout.OnTabClickListener  {
 
     private final String TAG_CLASS = "MainMatchActivity";
     private TabLowLayout mTabLowLayout;
