@@ -155,11 +155,12 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             switch (v.getId()) {
                 // 拍照
                 case R.id.takePhotoBtn:
-                    Intent takeIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takeIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                            Uri.fromFile(new File(Environment.getExternalStorageDirectory(), IMAGE_FILE_NAME)));
-                    startActivityForResult(takeIntent, REQUESTCODE_TAKE);
-                    //takePhoto();
+                   /* Intent takeIntent = new Intent();
+                    File file = new File(Environment.getExternalStorageDirectory().getPath(), IMAGE_FILE_NAME);
+                    takeIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+                    takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(takeIntent, REQUESTCODE_TAKE);*/
+                    takePhoto();
                     break;
                 // 相册选择
                 case R.id.pickPhotoBtn:
@@ -188,10 +189,16 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
              * 这里使用的这种方式有一个好处就是获取的图片是拍照后的原图
              * 如果不使用ContentValues存放照片路径的话，拍照后获取的图片为缩略图不清晰
              */
-            ContentValues values = new ContentValues();
+            ContentValues values = new ContentValues(1);
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
             photoUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri);
-            startActivityForResult(intent, SELECT_PIC_BY_TACK_PHOTO);
+            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+
+            this.startActivityForResult(intent, REQUESTCODE_TAKE);
         } else {
             Toast.makeText(mContext, "内存卡不存在", Toast.LENGTH_LONG).show();
         }
@@ -222,16 +229,16 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             return;
         }
         switch (requestCode) {
-            case REQUESTCODE_TAKE :
+            case REQUESTCODE_PICK :
                 try {
                     startSimplePhotoZoom(data.getData());
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
                 break;
-            case REQUESTCODE_PICK :
-                File temp = new File(Environment.getExternalStorageDirectory() + "/" + IMAGE_FILE_NAME);
-                startSimplePhotoZoom(Uri.fromFile(temp));
+            case REQUESTCODE_TAKE :
+                File temp = new File(Environment.getExternalStorageDirectory().getPath(), IMAGE_FILE_NAME);
+                startSimplePhotoZoom(data.getData());
                 break;
             case REQUESTCODE_CUTTING:
                 if (data != null) {
@@ -272,8 +279,8 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             urlpath = FileUtil.saveFile(mContext, "avatarImage.jpg", photo);
             imageView.setImageDrawable(drawable);
 
-            pd = ProgressDialog.show(mContext, null, "正在上传图片，请稍候...");
-            new Thread(uploadImageRunnable).start();
+           //pd = ProgressDialog.show(mContext, null, "正在上传图片，请稍候...");
+            //new Thread(uploadImageRunnable).start();
         }
     }
     /**
@@ -285,10 +292,10 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         @Override
         public void run() {
 
-            if(TextUtils.isEmpty(imgUrl)){
+            /*if(TextUtils.isEmpty(imgUrl)){
                 Toast.makeText(mContext, "还没有设置上传服务器的路径！", Toast.LENGTH_SHORT).show();
                 return;
-            }
+            }*/
 
             Map<String, String> textParams = new HashMap<String, String>();
             Map<String, File> fileparams = new HashMap<String, File>();
@@ -330,7 +337,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                     InputStream is = conn.getInputStream();
                     resultStr = NetUtil.readString(is);
                 } else {
-                    Toast.makeText(mContext, "请求URL失败！", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mContext, "请求URL失败！", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
