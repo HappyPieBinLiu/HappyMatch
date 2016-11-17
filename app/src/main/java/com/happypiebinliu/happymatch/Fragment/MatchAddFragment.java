@@ -1,9 +1,13 @@
 package com.happypiebinliu.happymatch.Fragment;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,7 +17,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,14 +67,18 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private String urlpath;
     private String resultStr = "";
     private static ProgressDialog pd;
-    public static final int REQUESTCODE_PICK = 0;
-    public static final int REQUESTCODE_TAKE = 1;
+    public static final int REQUEST_CODE_PICK = 0;
+    public static final int REQUEST_CODE_TAKE = 1;
+    public static final int REQUEST_CODE_CUTTING = 3;
+    // The permission of camera
+    public static final int PERMISSION_CAMERA = 10;
+    // The permission of storage
+    public static final int PERMISSION_STORAGE = 11;
+
     private static final String IMAGE_FILE_NAME = "avatarImage.jpg";
 
     private Uri photoUri;
-    public static final int SELECT_PIC_BY_TACK_PHOTO = 1;
-    public static final int SELECT_PIC_BY_PICK_PHOTO = 2;
-    public static final int REQUESTCODE_CUTTING = 3;
+
     private String picPath = "";
     private String imgUrl = "";
 
@@ -159,15 +170,13 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                     File file = new File(Environment.getExternalStorageDirectory().getPath(), IMAGE_FILE_NAME);
                     takeIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                     takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                    startActivityForResult(takeIntent, REQUESTCODE_TAKE);*/
-                    takePhoto();
+                    startActivityForResult(takeIntent, REQUEST_CODE_TAKE);*/
+                    checkPermission(PERMISSION_CAMERA);
+                    //takePhoto();
                     break;
                 // 相册选择
                 case R.id.pickPhotoBtn:
-                    Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
-                    pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                    startActivityForResult(pickIntent, REQUESTCODE_PICK);
-                    //pickPhoto();
+                    pickPhoto();
                     break;
                 default:
                     break;
@@ -176,11 +185,73 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     };
 
     /**
+     * check for the permission.
+     * SDK > 23
+     * @param permission
+     */
+    private void checkPermission(int permission) {
+        int isHasPermission;
+        switch (permission){
+            case PERMISSION_CAMERA:
+                isHasPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
+                if (isHasPermission != PackageManager.PERMISSION_GRANTED) {
+                    if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                        showRationaleDialog(getResources().getString(R.string.permission_camera_rationale),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ActivityCompat.requestPermissions(getActivity(),
+                                                new String[]{Manifest.permission.CAMERA},
+                                                PERMISSION_CAMERA);
+                                    }
+                                });
+                        return;
+                    }
+                    // Fragment
+                    requestPermissions(
+                            new String[]{Manifest.permission.CAMERA},
+                            PERMISSION_CAMERA);
+                    return;
+                }
+                checkPermission(PERMISSION_STORAGE);
+                break;
+            case PERMISSION_STORAGE:
+                isHasPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (isHasPermission != PackageManager.PERMISSION_GRANTED) {
+                    if (!shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        showRationaleDialog(getResources().getString(R.string.permission_camera_rationale),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ActivityCompat.requestPermissions(getActivity(),
+                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                                PERMISSION_CAMERA);
+                                    }
+                                });
+                        return;
+                    }
+                    // Fragment
+                    requestPermissions(
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PERMISSION_STORAGE);
+                    return;
+                }
+                takePhoto();
+                break;
+            default:
+                break;
+        }
+        return;
+    }
+
+
+    /**
      * 拍照获取图片
      */
     private void takePhoto() {
         // 执行拍照前，应该先判断SD是否存在
         String SDState = Environment.getExternalStorageState();
+
         if (SDState.equals(Environment.MEDIA_MOUNTED)) {
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -198,7 +269,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
 
-            this.startActivityForResult(intent, REQUESTCODE_TAKE);
+            this.startActivityForResult(intent, REQUEST_CODE_TAKE);
         } else {
             Toast.makeText(mContext, "内存卡不存在", Toast.LENGTH_LONG).show();
         }
@@ -210,10 +281,27 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private void pickPhoto() {
         Intent intent = new Intent();
         // 如果要限制上传到服务器的图片类型时可以直接写如："image/jpeg 、 image/png等的类型"
-        intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, SELECT_PIC_BY_PICK_PHOTO);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        startActivityForResult(intent, REQUEST_CODE_PICK);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case PERMISSION_CAMERA:
+                checkPermission(PERMISSION_STORAGE);
+                break;
+            case PERMISSION_STORAGE:
+                takePhoto();
+                break;
+            default:
+                break;
+        }
+        return;
+    }
+
     /**
      *  读取照片后的返回
      * @param requestCode
@@ -229,18 +317,18 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             return;
         }
         switch (requestCode) {
-            case REQUESTCODE_PICK :
+            case REQUEST_CODE_PICK :
                 try {
                     startSimplePhotoZoom(data.getData());
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
                 break;
-            case REQUESTCODE_TAKE :
-                File temp = new File(Environment.getExternalStorageDirectory().getPath(), IMAGE_FILE_NAME);
+            case REQUEST_CODE_TAKE :
+
                 startSimplePhotoZoom(data.getData());
                 break;
-            case REQUESTCODE_CUTTING:
+            case REQUEST_CODE_CUTTING:
                 if (data != null) {
                     setPicToView(data);
                 }
@@ -250,7 +338,14 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         }
     }
 
-
+    private void showRationaleDialog(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(getContext())
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
     /**
      *　简单裁切处理
      * @param uri
@@ -264,7 +359,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         intent.putExtra("outputX", 300);
         intent.putExtra("outputY", 300);
         intent.putExtra("return-data", true);
-        startActivityForResult(intent, REQUESTCODE_CUTTING);
+        startActivityForResult(intent, REQUEST_CODE_CUTTING);
     }
 
     /**

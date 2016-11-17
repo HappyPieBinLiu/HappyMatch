@@ -58,5 +58,6 @@
     <string name="feedbacktext">" 用户反馈 "</string>
     <string name="recommandtext">" 推荐好友 "</string>
     <string name="clearcachetext">" 清除缓存 "</string>
+    <string name="permission_camera_rationale">" 请圣上下旨，给予特权"</string>
 
 </resources>
