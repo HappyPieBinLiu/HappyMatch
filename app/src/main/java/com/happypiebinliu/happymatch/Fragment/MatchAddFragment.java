@@ -1,9 +1,12 @@
 package com.happypiebinliu.happymatch.Fragment;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,8 +16,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +53,7 @@ import static android.app.Activity.RESULT_CANCELED;
  */
 
 public class MatchAddFragment extends BaseFragment implements ITabClickListener, View.OnClickListener {
+    private Activity thisActivity;
     private View view ;
     private Button selectBtn;
     private Button uploadBtn;
@@ -70,6 +75,8 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     public static final int REQUESTCODE_CUTTING = 3;
     private String picPath = "";
     private String imgUrl = "";
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 10;
+    public static final int MY_PERMISSIONS_REQUEST_CAMERA = 11;
 
     @Override
     public void fetchData() {
@@ -106,6 +113,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         imageView.setBackground(drawable);
 
         mContext = getContext();
+        thisActivity = getActivity();
         return view;
     }
 
@@ -160,7 +168,10 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                     takeIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                     takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                     startActivityForResult(takeIntent, REQUESTCODE_TAKE);*/
-                    takePhoto();
+
+                    // 确认相机权限
+                    checkForPermission(MY_PERMISSIONS_REQUEST_CAMERA);
+                    //takePhoto();
                     break;
                 // 相册选择
                 case R.id.pickPhotoBtn:
@@ -175,10 +186,45 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         }
     };
 
+    private  void checkForPermission ( int permission) {
+
+        if (permission == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            // 检查用户是否有读写存储空间权限
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Fragment 中要用自己的函数
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                } else {
+                    // Fragment 中要用自己的函数
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                }
+            }
+        }
+        if (permission == MY_PERMISSIONS_REQUEST_CAMERA){
+            // 检查用户是否有访问相机权限
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Fragment 中要用自己的函数
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+
+                } else {
+                    // Fragment 中要用自己的函数
+                    requestPermissions(new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_REQUEST_CAMERA);
+                }
+            }
+        }
+    }
+
     /**
      * 拍照获取图片
      */
     private void takePhoto() {
+
         // 执行拍照前，应该先判断SD是否存在
         String SDState = Environment.getExternalStorageState();
         if (SDState.equals(Environment.MEDIA_MOUNTED)) {
@@ -202,6 +248,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         } else {
             Toast.makeText(mContext, "内存卡不存在", Toast.LENGTH_LONG).show();
         }
+
     }
 
     /***
@@ -237,7 +284,8 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                 }
                 break;
             case REQUESTCODE_TAKE :
-                File temp = new File(Environment.getExternalStorageDirectory().getPath(), IMAGE_FILE_NAME);
+                //Bitmap bm = (Bitmap) data.getExtras().get(android.provider.MediaStore.EXTRA_OUTPUT);
+                //imageView.setImageBitmap(bm);
                 startSimplePhotoZoom(data.getData());
                 break;
             case REQUESTCODE_CUTTING:
@@ -264,7 +312,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         intent.putExtra("outputX", 300);
         intent.putExtra("outputY", 300);
         intent.putExtra("return-data", true);
-        startActivityForResult(intent, REQUESTCODE_CUTTING);
+        this.startActivityForResult(intent, REQUESTCODE_CUTTING);
     }
 
     /**
@@ -283,6 +331,40 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             //new Thread(uploadImageRunnable).start();
         }
     }
+
+    /**
+     * 用户选择允许或拒绝后，会回调onRequestPermissionsResult方法
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    checkForPermission(MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                } else {
+                }
+                return;
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 开始拍照
+                    takePhoto();
+                } else {
+                }
+                return;
+            }
+        }
+    }
+
+
     /**
      * 使用HttpUrlConnection模拟post表单进行文件
      * 上传平时很少使用，比较麻烦
