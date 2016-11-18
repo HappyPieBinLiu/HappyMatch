@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +33,7 @@ import com.happypiebinliu.happymatch.R;
 import com.happypiebinliu.happymatch.activity.TabAddActivity;
 import com.happypiebinliu.happymatch.common.FileUtil;
 import com.happypiebinliu.happymatch.common.ITabClickListener;
+import com.happypiebinliu.happymatch.common.LogUtil;
 import com.happypiebinliu.happymatch.common.NetUtil;
 import com.happypiebinliu.happymatch.view.SelectPicPopupWindow;
 
@@ -50,12 +50,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_CANCELED;
+import static com.happypiebinliu.happymatch.common.LogUtil.TAG_DEBUG;
 
 /**
  * Created by B.Liu on 2016/10/27.
  */
 
 public class MatchAddFragment extends BaseFragment implements ITabClickListener, View.OnClickListener {
+
+    LogUtil logUtil;
     private View view ;
     private Button selectBtn;
     private Button uploadBtn;
@@ -76,8 +79,8 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     public static final int PERMISSION_STORAGE = 11;
 
     private static final String IMAGE_FILE_NAME = "avatarImage.jpg";
-
-    private Uri photoUri;
+    // 拍照后的照片存储Ｕｒｉ
+    private Uri takePhotoUri;
 
     private String picPath = "";
     private String imgUrl = "";
@@ -99,7 +102,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        logUtil.debug(TAG_DEBUG, "onCreateView-Start--------");
         view = inflater.inflate(R.layout.tab_add_layout, container, false);
 
         selectBtn = (Button) view.findViewById(R.id.btnSelectTop);
@@ -117,6 +120,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         imageView.setBackground(drawable);
 
         mContext = getContext();
+        logUtil.info(TAG_DEBUG,"onCreateView-End--------");
         return view;
     }
 
@@ -162,20 +166,18 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private View.OnClickListener itemsOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             popupWindow.dismiss();
+
             switch (v.getId()) {
                 // 拍照
                 case R.id.takePhotoBtn:
-                   /* Intent takeIntent = new Intent();
-                    File file = new File(Environment.getExternalStorageDirectory().getPath(), IMAGE_FILE_NAME);
-                    takeIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                    startActivityForResult(takeIntent, REQUEST_CODE_TAKE);*/
+                    // 进行相机权限的Grant
                     checkPermission(PERMISSION_CAMERA);
-                    //takePhoto();
                     break;
                 // 相册选择
                 case R.id.pickPhotoBtn:
+                    // 选择照片处理
                     pickPhoto();
                     break;
                 default:
@@ -190,12 +192,17 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
      * @param permission
      */
     private void checkPermission(int permission) {
+        logUtil.debug(TAG_DEBUG,"checkPermission-Start--------");
         int isHasPermission;
         switch (permission){
             case PERMISSION_CAMERA:
+                logUtil.debug(TAG_DEBUG,"checkPermission-PERMISSION_CAMERA--------");
                 isHasPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
                 if (isHasPermission != PackageManager.PERMISSION_GRANTED) {
+                    logUtil.debug(TAG_DEBUG,"checkPermission-　Has not Permission--------");
+                    // Fragment 自身的shouldShowRequestPermissionRationale函数
                     if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+
                         showRationaleDialog(getResources().getString(R.string.permission_camera_rationale),
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -207,18 +214,19 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                                 });
                         return;
                     }
-                    // Fragment
-                    requestPermissions(
-                            new String[]{Manifest.permission.CAMERA},
-                            PERMISSION_CAMERA);
+                    // Fragment 自身的shouldShowRequestPermissionRationale函数
+                    requestPermissions(new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
                     return;
                 }
+                // 存储权限的判断
                 checkPermission(PERMISSION_STORAGE);
                 break;
             case PERMISSION_STORAGE:
+                logUtil.debug(TAG_DEBUG,"checkPermission-PERMISSION_STORAGE--------");
                 isHasPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 if (isHasPermission != PackageManager.PERMISSION_GRANTED) {
                     if (!shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        logUtil.debug(TAG_DEBUG,"checkPermission-　Has not Permission--------");
                         showRationaleDialog(getResources().getString(R.string.permission_camera_rationale),
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -230,75 +238,86 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                                 });
                         return;
                     }
-                    // Fragment
+                    // Fragment 自身的shouldShowRequestPermissionRationale函数
                     requestPermissions(
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSION_STORAGE);
                     return;
                 }
+                // 已经获得权限的，直接进行拍照
                 takePhoto();
                 break;
             default:
                 break;
         }
+        logUtil.debug(TAG_DEBUG, "checkPermission-END--------");
         return;
     }
 
 
     /**
      * 拍照获取图片
+     * 需要说明一下，以下操作使用照相机拍照，拍照后的图片会存放在相册中的
+     * 这里使用的这种方式有一个好处就是获取的图片是拍照后的原图
+     * 如果不使用ContentValues存放照片路径的话，拍照后获取的图片为缩略图不清晰
      */
     private void takePhoto() {
+
+        logUtil.debug(TAG_DEBUG, "takePhoto-Start--------");
+
         // 执行拍照前，应该先判断SD是否存在
         String SDState = Environment.getExternalStorageState();
 
         if (SDState.equals(Environment.MEDIA_MOUNTED)) {
 
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            /***
-             * 需要说明一下，以下操作使用照相机拍照，拍照后的图片会存放在相册中的
-             * 这里使用的这种方式有一个好处就是获取的图片是拍照后的原图
-             * 如果不使用ContentValues存放照片路径的话，拍照后获取的图片为缩略图不清晰
-             */
+            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             ContentValues values = new ContentValues(1);
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-            photoUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            takePhotoUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
                     | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri);
+            intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, takePhotoUri);
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
 
-            this.startActivityForResult(intent, REQUEST_CODE_TAKE);
+            startActivityForResult(intent, REQUEST_CODE_TAKE);
         } else {
             Toast.makeText(mContext, "内存卡不存在", Toast.LENGTH_LONG).show();
         }
+        logUtil.debug(TAG_DEBUG, "takePhoto-End--------");
     }
 
     /***
      * 从相册中取图片
      */
     private void pickPhoto() {
-        Intent intent = new Intent();
-        // 如果要限制上传到服务器的图片类型时可以直接写如："image/jpeg 、 image/png等的类型"
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+
+        logUtil.debug(TAG_DEBUG, "pickPhoto-Start--------");
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE_PICK);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        logUtil.debug(TAG_DEBUG, "onRequestPermissionsResult-Start--------");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case PERMISSION_CAMERA:
-                checkPermission(PERMISSION_STORAGE);
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkPermission(PERMISSION_STORAGE);
+                }
                 break;
             case PERMISSION_STORAGE:
-                takePhoto();
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    takePhoto();
+                }
                 break;
             default:
                 break;
         }
+        logUtil.debug(TAG_DEBUG, "onRequestPermissionsResult-End--------");
         return;
     }
 
@@ -311,6 +330,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        logUtil.debug(TAG_DEBUG, "onActivityResult-Start--------");
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == RESULT_CANCELED){
@@ -319,6 +339,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         switch (requestCode) {
             case REQUEST_CODE_PICK :
                 try {
+                    // 取得照片的裁切
                     startSimplePhotoZoom(data.getData());
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -326,16 +347,21 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                 break;
             case REQUEST_CODE_TAKE :
 
-                startSimplePhotoZoom(data.getData());
+                if (takePhotoUri != null){
+                    // 取得照片的裁切
+                    startSimplePhotoZoom(takePhotoUri);
+                }
                 break;
             case REQUEST_CODE_CUTTING:
                 if (data != null) {
+                    // 裁切后照片Ｖｉｅｗ上的显示
                     setPicToView(data);
                 }
                 break;
             default:
                 break;
         }
+        logUtil.debug(TAG_DEBUG, "onActivityResult-End--------");
     }
 
     private void showRationaleDialog(String message, DialogInterface.OnClickListener okListener) {
@@ -351,6 +377,9 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
      * @param uri
      */
     public void startSimplePhotoZoom(Uri uri) {
+
+        logUtil.debug(TAG_DEBUG, "startSimplePhotoZoom-Start--------");
+
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
@@ -360,20 +389,22 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         intent.putExtra("outputY", 300);
         intent.putExtra("return-data", true);
         startActivityForResult(intent, REQUEST_CODE_CUTTING);
+        logUtil.debug(TAG_DEBUG, "startSimplePhotoZoom-End--------");
     }
 
     /**
      * 保存裁切后的图片
-     * @param picdata
+     * @param data
      */
-    private void setPicToView(Intent picdata) {
-        Bundle extras = picdata.getExtras();
+    private void setPicToView(Intent data) {
+        logUtil.debug(TAG_DEBUG, "setPicToView-Start--------");
+        Bundle extras = data.getExtras();
         if (extras != null) {
             Bitmap photo = extras.getParcelable("data");
             Drawable drawable = new BitmapDrawable(null, photo);
             urlpath = FileUtil.saveFile(mContext, "avatarImage.jpg", photo);
             imageView.setImageDrawable(drawable);
-
+            logUtil.debug(TAG_DEBUG, "setPicToView-End--------");
            //pd = ProgressDialog.show(mContext, null, "正在上传图片，请稍候...");
             //new Thread(uploadImageRunnable).start();
         }

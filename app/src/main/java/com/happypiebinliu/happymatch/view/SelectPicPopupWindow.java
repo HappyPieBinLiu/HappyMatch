@@ -15,6 +15,7 @@ import android.widget.PopupWindow;
 import com.happypiebinliu.happymatch.R;
 
 /**
+ * 相机和相册的选择的POP画面
  * Created by Bin.Liu on 2016/10/25.
  */
 public class SelectPicPopupWindow extends PopupWindow {
