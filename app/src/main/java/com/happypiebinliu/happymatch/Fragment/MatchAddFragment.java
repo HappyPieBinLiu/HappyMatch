@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,8 +48,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SimpleTimeZone;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static com.happypiebinliu.happymatch.common.LogUtil.TAG_DEBUG;
@@ -70,9 +75,11 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private String urlpath;
     private String resultStr = "";
     private static ProgressDialog pd;
+
     public static final int REQUEST_CODE_PICK = 0;
     public static final int REQUEST_CODE_TAKE = 1;
     public static final int REQUEST_CODE_CUTTING = 3;
+
     // The permission of camera
     public static final int PERMISSION_CAMERA = 10;
     // The permission of storage
@@ -81,6 +88,8 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private static final String IMAGE_FILE_NAME = "avatarImage.jpg";
     // 拍照后的照片存储Ｕｒｉ
     private Uri takePhotoUri;
+    // 照片的Path
+     private String currentTakePath;
 
     private String picPath = "";
     private String imgUrl = "";
@@ -116,8 +125,6 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
 
         // imageView
         imageView = (ImageView) view.findViewById(R.id.TopImage);
-        Drawable drawable = getResources().getDrawable(R.drawable.upload);
-        imageView.setBackground(drawable);
 
         mContext = getContext();
         logUtil.info(TAG_DEBUG,"onCreateView-End--------");
@@ -141,7 +148,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     @Override
     public void onClick(View view) {
         Intent intent;
-        Drawable drawable;
+
         switch (view.getId()){
             case R.id.btnSelectTop:
                 // 选择 按钮按下，选择图片的取得方式 相册或者相机
@@ -151,6 +158,8 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                         Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
                 break;
             case R.id.btnUploadTop:
+                // 当前图片上传并且重命名
+                uploadPicToMatch();
                 break;
             case R.id.btnChangeTop:
                 intent = new Intent(getContext(), TabAddActivity.class);
@@ -161,6 +170,16 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             default:
                 break;
         }
+    }
+
+    /**
+     * 1，进行图片的保存和重命名
+     * 2，对于原来图片的删除处理
+     * 3，跳转MatchTAB
+     */
+    private void uploadPicToMatch() {
+        Intent intent = new Intent(getContext(), TabAddActivity.class);
+        startActivity(intent);
     }
 
     private View.OnClickListener itemsOnClick = new View.OnClickListener() {
@@ -254,6 +273,24 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         return;
     }
 
+    /**
+     * 创建照片的存放路径
+     *
+     * @return  takeImage 图片File
+     */
+    private File createImageFile() throws Exception{
+
+        // 取得一个时间 防止命名的冲突
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "TEMP_" + timeStamp + "_";
+        // 这个函数的数据，会在用户卸载的时候删除
+        File fileStorageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File takeImage = File.createTempFile(imageFileName, ".jpg", fileStorageDir);
+        // 得到绝对路径，
+        currentTakePath = takeImage.getAbsolutePath();
+        return takeImage;
+
+    }
 
     /**
      * 拍照获取图片
@@ -270,17 +307,32 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
 
         if (SDState.equals(Environment.MEDIA_MOUNTED)) {
 
-            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            ContentValues values = new ContentValues(1);
+            Intent takeIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+            if (takeIntent.resolveActivity(getContext().getPackageManager()) != null){
+                File takeFile = null;
+                try{
+                    takeFile =  createImageFile();
+                } catch (Exception e) {
+                    LogUtil.error(TAG_DEBUG, "createImageFile is failed!!");
+                }
+                if (takeFile != null){
+                    takePhotoUri = FileProvider.getUriForFile(getContext(),
+                            "com.happypiebinliu.happymatch.fileprovider", takeFile);
+                    takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, takePhotoUri);
+                    startActivityForResult(takeIntent, REQUEST_CODE_TAKE);
+
+                }
+            }
+            /*ContentValues values = new ContentValues(1);
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
             takePhotoUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
                     | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, takePhotoUri);
-            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);*/
 
-            startActivityForResult(intent, REQUEST_CODE_TAKE);
         } else {
             Toast.makeText(mContext, "内存卡不存在", Toast.LENGTH_LONG).show();
         }
@@ -349,13 +401,13 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
 
                 if (takePhotoUri != null){
                     // 取得照片的裁切
-                    startSimplePhotoZoom(takePhotoUri);
+                    setPicToView(data, true);
                 }
                 break;
             case REQUEST_CODE_CUTTING:
                 if (data != null) {
                     // 裁切后照片Ｖｉｅｗ上的显示
-                    setPicToView(data);
+                    setPicToView(data, false);
                 }
                 break;
             default:
@@ -396,18 +448,46 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
      * 保存裁切后的图片
      * @param data
      */
-    private void setPicToView(Intent data) {
+    private void setPicToView(Intent data, boolean isTaking) {
         logUtil.debug(TAG_DEBUG, "setPicToView-Start--------");
-        Bundle extras = data.getExtras();
-        if (extras != null) {
-            Bitmap photo = extras.getParcelable("data");
-            Drawable drawable = new BitmapDrawable(null, photo);
-            urlpath = FileUtil.saveFile(mContext, "avatarImage.jpg", photo);
-            imageView.setImageDrawable(drawable);
-            logUtil.debug(TAG_DEBUG, "setPicToView-End--------");
-           //pd = ProgressDialog.show(mContext, null, "正在上传图片，请稍候...");
-            //new Thread(uploadImageRunnable).start();
+        if (isTaking){
+
+            // Get the dimensions of the View
+            int targetW = imageView.getWidth();
+            int targetH = imageView.getHeight();
+
+            // Get the dimensions of the bitmap
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bmOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(currentTakePath, bmOptions);
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+
+            // Determine how much to scale down the image
+            int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+            // Decode the image file into a Bitmap sized to fill the View
+            bmOptions.inJustDecodeBounds = false;
+            bmOptions.inSampleSize = scaleFactor;
+            bmOptions.inPurgeable = true;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(currentTakePath, bmOptions);
+            imageView.setImageBitmap(bitmap);
+        } else {
+
+            Bundle extras = data.getExtras();
+            if (extras != null) {
+                Bitmap photo = extras.getParcelable("data");
+                Drawable drawable = new BitmapDrawable(null, photo);
+                urlpath = FileUtil.saveFile(mContext, "avatarImage.jpg", photo);
+
+                imageView.setImageDrawable(drawable);
+                logUtil.debug(TAG_DEBUG, "setPicToView-End--------");
+               //pd = ProgressDialog.show(mContext, null, "正在上传图片，请稍候...");
+                //new Thread(uploadImageRunnable).start();
+            }
         }
+
     }
     /**
      * 使用HttpUrlConnection模拟post表单进行文件
