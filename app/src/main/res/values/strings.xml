@@ -30,10 +30,12 @@
         <item>女</item>
         <item>男</item>　
     </string-array>
+
     <string-array name="topLowItems">
         <item>Top</item>
         <item>Low</item>　
     </string-array>
+
     <!-- home tab button -->
     <string name="main">"Match"</string>
     <string name="add">"添加"</string>

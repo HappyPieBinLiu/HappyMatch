@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.happypiebinliu.happymatch.R;
 import com.happypiebinliu.happymatch.activity.TabAddActivity;
+import com.happypiebinliu.happymatch.adapter.spinnerAdapter;
 import com.happypiebinliu.happymatch.common.FileUtil;
 import com.happypiebinliu.happymatch.common.ITabClickListener;
 import com.happypiebinliu.happymatch.common.LogUtil;
@@ -73,6 +74,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private ImageView imageView;
     private SelectPicPopupWindow popupWindow;
     private Context mContext;
+    private String[] mArrayString;
     private String urlpath;
     private String resultStr = "";
     private String topLowFlg = "";
@@ -126,16 +128,22 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         // spinner
         spinner = (Spinner) view.findViewById(R.id.spinnerTopOrLow);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                getContext(), R.array.topLowItems, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mArrayString = getResources().getStringArray(R.array.topLowItems);
+        // 启用自己重写的spinner
+        spinnerAdapter adapter = new spinnerAdapter(getContext(), mArrayString);
+
         spinner.setAdapter(adapter);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 topLowFlg = parent.getItemAtPosition(position).toString();
-                if (topLowFlg.equals("Top")) logUtil.debug(TAG_DEBUG, "Top is selected!!-------");
-                if (topLowFlg.equals("Low")) logUtil.debug(TAG_DEBUG, "Low is selected!!-------");
+                if (topLowFlg.equals("Top")) {
+                    logUtil.debug(TAG_DEBUG, "Top is selected!!-------");
+                }
+                if (topLowFlg.equals("Low")) {
+                    logUtil.debug(TAG_DEBUG, "Low is selected!!-------");
+                }
             }
 
             @Override
