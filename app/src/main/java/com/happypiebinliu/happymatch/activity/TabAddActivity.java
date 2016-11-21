@@ -10,6 +10,6 @@ public class TabAddActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_add_low_layout);
+        setContentView(R.layout.tab_add_layout);
     }
 }

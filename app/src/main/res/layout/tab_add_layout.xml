@@ -5,9 +5,10 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <ImageView
-        android:id="@+id/TopImage"
+        android:id="@+id/Image"
         android:layout_width="match_parent"
         android:layout_weight="1"
+        android:background="@drawable/upload"
         android:layout_height="0dp"/>
 
     <LinearLayout
@@ -19,13 +20,13 @@
         android:layout_height="0dp">
 
         <LinearLayout
-            android:id="@+id/layoutBtnTop"
+            android:id="@+id/layoutBtn"
             android:orientation="horizontal"
             android:layout_centerVertical="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
-                android:id="@+id/btnSelectTop"
+                android:id="@+id/btnSelect"
                 android:text="@string/selectbutton"
                 android:layout_weight="1"
                 android:layout_width="0dp"
@@ -38,7 +39,7 @@
                 android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/btnUploadTop"
+                android:id="@+id/btnUpload"
                 android:text="@string/uploadbutton"
                 android:layout_weight="1"
                 android:layout_width="0dp"
@@ -49,20 +50,17 @@
                 android:textColor="#ffffff"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
+            <Spinner android:id="@+id/spinnerTopOrLow"
+                     android:layout_weight="1"
+                     android:layout_width="0dp"
+                     android:layout_height="match_parent"
+                     android:entries="@array/topLowItems"
+                     android:background="#43AFE8"
+                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                     android:layout_marginRight="@dimen/activity_horizontal_margin"
+                     android:spinnerMode="dropdown"
+                     android:dropDownWidth="match_parent"/>
 
-            <Button
-                android:id="@+id/btnChangeTop"
-                android:text="@string/changebutton"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:gravity="center"
-                android:background="@drawable/selector_button_color"
-                android:textColor="#ffffff"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
         </LinearLayout>
         <LinearLayout
             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -97,7 +95,7 @@
 
         </LinearLayout>
         <Button
-            android:id="@+id/addLineTopBtn"
+            android:id="@+id/addLineBtn"
             android:text="@string/addline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

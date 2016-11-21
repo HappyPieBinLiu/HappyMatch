@@ -27,10 +27,12 @@
     <string name="tip_user_is_registered"> 用户名已被注册，请您换个有个性的名字吧。</string>
 
     <string-array name="sexItems">
-        <item></item>
         <item>女</item>
-        <item>男</item>
-        　
+        <item>男</item>　
+    </string-array>
+    <string-array name="topLowItems">
+        <item>Top</item>
+        <item>Low</item>　
     </string-array>
     <!-- home tab button -->
     <string name="main">"Match"</string>

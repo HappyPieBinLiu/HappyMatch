@@ -3,7 +3,6 @@ package com.happypiebinliu.happymatch.Fragment;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,8 +26,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.happypiebinliu.happymatch.R;
@@ -52,7 +54,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SimpleTimeZone;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static com.happypiebinliu.happymatch.common.LogUtil.TAG_DEBUG;
@@ -67,13 +68,14 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     private View view ;
     private Button selectBtn;
     private Button uploadBtn;
-    private Button changeBtn;
+    private Spinner spinner;
     private Button addLineBtn;
     private ImageView imageView;
     private SelectPicPopupWindow popupWindow;
     private Context mContext;
     private String urlpath;
     private String resultStr = "";
+    private String topLowFlg = "";
     private static ProgressDialog pd;
 
     public static final int REQUEST_CODE_PICK = 0;
@@ -114,17 +116,37 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         logUtil.debug(TAG_DEBUG, "onCreateView-Start--------");
         view = inflater.inflate(R.layout.tab_add_layout, container, false);
 
-        selectBtn = (Button) view.findViewById(R.id.btnSelectTop);
-        uploadBtn = (Button) view.findViewById(R.id.btnUploadTop);
-        changeBtn = (Button) view.findViewById(R.id.btnChangeTop);
-        addLineBtn = (Button) view.findViewById(R.id.addLineTopBtn);
+        selectBtn = (Button) view.findViewById(R.id.btnSelect);
+        uploadBtn = (Button) view.findViewById(R.id.btnUpload);
+        addLineBtn = (Button) view.findViewById(R.id.addLineBtn);
         selectBtn.setOnClickListener(this);
         uploadBtn.setOnClickListener(this);
-        changeBtn.setOnClickListener(this);
         addLineBtn.setOnClickListener(this);
 
+        // spinner
+        spinner = (Spinner) view.findViewById(R.id.spinnerTopOrLow);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getContext(), R.array.topLowItems, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                topLowFlg = parent.getItemAtPosition(position).toString();
+                if (topLowFlg.equals("Top")) logUtil.debug(TAG_DEBUG, "Top is selected!!-------");
+                if (topLowFlg.equals("Low")) logUtil.debug(TAG_DEBUG, "Low is selected!!-------");
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
         // imageView
-        imageView = (ImageView) view.findViewById(R.id.TopImage);
+        imageView = (ImageView) view.findViewById(R.id.Image);
 
         mContext = getContext();
         logUtil.info(TAG_DEBUG,"onCreateView-End--------");
@@ -150,22 +172,18 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
         Intent intent;
 
         switch (view.getId()){
-            case R.id.btnSelectTop:
+            case R.id.btnSelect:
                 // 选择 按钮按下，选择图片的取得方式 相册或者相机
                 popupWindow = new SelectPicPopupWindow(mContext, itemsOnClick);
                 // 这个地方一定要写getActivity().findViewById
                 popupWindow.showAtLocation(getActivity().findViewById(R.id.TabAddLayout),
                         Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0);
                 break;
-            case R.id.btnUploadTop:
+            case R.id.btnUpload:
                 // 当前图片上传并且重命名
                 uploadPicToMatch();
                 break;
-            case R.id.btnChangeTop:
-                intent = new Intent(getContext(), TabAddActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.addLineTopBtn:
+            case R.id.addLineBtn:
                 break;
             default:
                 break;
@@ -431,14 +449,15 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
     public void startSimplePhotoZoom(Uri uri) {
 
         logUtil.debug(TAG_DEBUG, "startSimplePhotoZoom-Start--------");
-
+        int targetW = imageView.getWidth();
+        int targetH = imageView.getHeight();
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
+        intent.putExtra("aspectY", targetW/targetH);
+        intent.putExtra("outputX", targetW);
+        intent.putExtra("outputY", targetH);
         intent.putExtra("return-data", true);
         startActivityForResult(intent, REQUEST_CODE_CUTTING);
         logUtil.debug(TAG_DEBUG, "startSimplePhotoZoom-End--------");
@@ -450,6 +469,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
      */
     private void setPicToView(Intent data, boolean isTaking) {
         logUtil.debug(TAG_DEBUG, "setPicToView-Start--------");
+        // 相机选择
         if (isTaking){
 
             // Get the dimensions of the View
@@ -473,6 +493,7 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
 
             Bitmap bitmap = BitmapFactory.decodeFile(currentTakePath, bmOptions);
             imageView.setImageBitmap(bitmap);
+        // 相册选择的场合
         } else {
 
             Bundle extras = data.getExtras();
@@ -480,7 +501,6 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
                 Bitmap photo = extras.getParcelable("data");
                 Drawable drawable = new BitmapDrawable(null, photo);
                 urlpath = FileUtil.saveFile(mContext, "avatarImage.jpg", photo);
-
                 imageView.setImageDrawable(drawable);
                 logUtil.debug(TAG_DEBUG, "setPicToView-End--------");
                //pd = ProgressDialog.show(mContext, null, "正在上传图片，请稍候...");
@@ -584,4 +604,5 @@ public class MatchAddFragment extends BaseFragment implements ITabClickListener,
             return false;
         }
     });
+
 }
